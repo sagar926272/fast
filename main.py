@@ -2,8 +2,21 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 import string
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "https://fast-fe.onrender.com/"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Define the request schema
 class InputData(BaseModel):
