@@ -1,14 +1,44 @@
-from typing import Optional
-
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List
+import string
 
 app = FastAPI()
 
+# Define the request schema
+class InputData(BaseModel):
+    data: List[str]
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+# Hardcoded user details
+USER_ID = "Sagar kumar"
+EMAIL = "sagarsaxena514@gmail.com"
+ROLL_NUMBER = "2"
+DOB = "17/03/2003"
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/bfhl")
+def get_operation_code():
+    return {"operation_code": 1}
+
+@app.post("/bfhl")
+def process_data(input_data: InputData):
+    numbers = []
+    alphabets = []
+    
+    for item in input_data.data:
+        if item.isdigit():
+            numbers.append(item)
+        elif len(item) == 1 and item.isalpha():
+            alphabets.append(item)
+    
+    highest_alphabet = max(alphabets, key=lambda x: string.ascii_lowercase.index(x.lower()), default=None)
+    
+    return {
+        "is_success": True,
+        "user_id": USER_ID,
+        "email": EMAIL,
+        "roll_number": ROLL_NUMBER,
+        "dob": DOB,
+        "numbers": numbers,
+        "alphabets": alphabets,
+        "highest_alphabet": [highest_alphabet] if highest_alphabet else []
+    }
